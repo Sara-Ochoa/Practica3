@@ -10,8 +10,8 @@ void Metodo();
 int BinToDeci(int binario[]);
 int Potencia(int base,int exp);
 void DeciToBin(char letra, int* Binario);
-void MetodoUno();
-void MetodoDos();
+void MetodoUno(int* codificado, int* binario, int semilla);
+void MetodoDos(int* codificado, int* binario, int semilla);
 
 int main()
 {
@@ -33,7 +33,6 @@ int main()
                     ofstream archivoEscritura;
                     string nombreArchivo;
                     string nomArchivo;
-                    string InfoBin;
                     cout<<"Ingrese el nombre del archivo: "<<endl;
                     cin>>nombreArchivo; //ESTE ES EL QUE SE PASA PARA QUE SE ABRA
                     cout<<"Ingrese el nombre del archivo que contendra el codificado: "<<endl;
@@ -48,11 +47,9 @@ int main()
 
                             for(int i=7; i>=0; i--){
                                 archivoEscritura<<Binario[i];
-                                InfoBin +=Binario[i];
                             }
                         }
                     }
-                    cout<<InfoBin<<endl;
                     archivoEscritura.close();
                     archivoLectura.close();
 
@@ -77,6 +74,7 @@ int main()
                                     binario[i]=temp;
                                 }
                             }
+
                             for(int i=0; i<semilla; i++){
                                 if(binario[i]=='1'){
                                     codificado[i]=0;
@@ -87,12 +85,12 @@ int main()
                                     archivoEscritura<<codificado[i];
                                 }
                             }
-                            /*Invocar la funcion del metodo 1 para codificar
-                            se le pasan los arreglos por referencia
-                            Los escribe en el archivo
-                            luego se aumenta los valores de i y semilla para obtener el otro arreglo (cuaderno)
-                            O revisar el link que esta en wpp para trabajar con strings
-                            */
+                            //Aca se puede hacer la invocacion del metodo
+                            /*
+                            MetodoUno(codificado, binario, semilla);
+                            for(int i=0; i<semilla; i++){
+                                archivoEscritura<<codificado[i];
+                            }*/
                             archivoEscritura.close();
                             archivoLectura.close();
                             break;
@@ -232,6 +230,80 @@ void DeciToBin(char letra, int* Binario){
     }
 }
 
-void MetodoUno(){
+void MetodoUno(int* codificado, int* binario, int semilla){
     //Esta funcion realiza la codificacion (decodificacion) correspondiente al metodo uno
+    int unos=0;
+    int ceros=0;
+    //Hacer un for que cuente cuantos 1 y 0 hay
+
+    for(int i=0; i<semilla; i++){
+        if(binario[i]=='0')
+            ceros += 1;
+        else
+            unos += 1;
+    }
+
+    //Si hay igual cantidad, se invierten todos los bits
+
+    if(ceros == unos){
+        for(int i=0; i<semilla; i++){
+            if(binario[i]=='1'){
+                codificado[i]=0;
+            }
+            else{
+                codificado[i]=1;
+            }
+        }
+    }
+
+    //Si hay mas 0, se invierten cada dos bits
+
+    else if(ceros>unos){
+        for(int i=0; i<semilla; i+2){
+            if(binario[i]=='1'){
+                codificado[i]=0;
+            }
+            else{
+                codificado[i]=1;
+            }
+        }
+    }
+
+    //Sino, se invierten cada 3 bits
+    else{
+        if(ceros>unos){
+            for(int i=0; i<semilla; i+2){
+                if(binario[i]=='1'){
+                    codificado[i]=0;
+                }
+                else{
+                    codificado[i]=1;
+                }
+            }
+        }
+    }
 }
+
+void MetodoDos(int* codificado, int* binario, int semilla){
+    //Esta función realiza la codificacion (decodificacion) correspondiente al metodo dos
+    for(int i=semilla-1; i>semilla-2; i--){
+        for(int j=0; j<1; j++){
+            codificado[j]=binario[i];
+        }
+        for(int k=1; k<semilla; k++){
+            for(int j=1; j<semilla; j++){
+                codificado[j]=binario[k];
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
