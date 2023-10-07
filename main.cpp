@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -53,6 +54,22 @@ int main()
                     archivoEscritura.close();
                     archivoLectura.close();
 
+                    archivoLectura.open("binario.txt");
+
+                    if (!archivoLectura.is_open()){
+                        cout<<"NO SE PUDO ABRIR EL ARCHIVO"<<endl;
+                    }
+
+                    string contenido;//Aquí está almacenado el binario
+                    string linea;
+
+                    while (getline(archivoLectura, linea)) {
+                        contenido += linea + "\n"; // Agrega cada línea al contenido
+                    }
+                    archivoLectura.close();
+
+                    //cout<<"El binario es: "<<contenido<<endl;
+
                     int semilla=0;
                     cout<<"Ingrese la semilla de codificacion: "<<endl;
                     cin>>semilla;
@@ -64,17 +81,31 @@ int main()
                         switch (opcion) {
                         case 1://Metodo 1
                         {
+
                             int binario[semilla];
                             int codificado[semilla];
-                            archivoLectura.open("binario.txt");
+
                             archivoEscritura.open(nomArchivo);
+                            /*//Esto ya no se hace porque la info la tengo en el string, por lo que no tengo que leerel archivo.
                             for(int i=0; i<semilla; i++){
                                 char temp = archivoLectura.get();
                                 if(archivoLectura.good()){
                                     binario[i]=temp;
                                 }
+                            }*/
+
+                            for(int i=0; ; i+semilla){
+                                for(int j=0; j<semilla; j++){
+                                    binario[j]=contenido[j];
+                                }
                             }
 
+
+
+
+
+
+                            /*
                             for(int i=0; i<semilla; i++){
                                 if(binario[i]=='1'){
                                     codificado[i]=0;
@@ -84,15 +115,11 @@ int main()
                                     codificado[i]=1;
                                     archivoEscritura<<codificado[i];
                                 }
-                            }
-                            //Aca se puede hacer la invocacion del metodo
-                            /*
-                            MetodoUno(codificado, binario, semilla);
-                            for(int i=0; i<semilla; i++){
-                                archivoEscritura<<codificado[i];
                             }*/
+
+
                             archivoEscritura.close();
-                            archivoLectura.close();
+
                             break;
                         }
                         case 2://Metodo 2
