@@ -11,7 +11,7 @@ void Metodo();
 int BinToDeci(int binario[]);
 int Potencia(int base,int exp);
 void DeciToBin(char letra, int* Binario);
-void MetodoUno(int* codificado, int* binario, int semilla);
+void MetodoUno(int* codificado, int* binario, int* copia, int semilla);
 void MetodoDos(int* codificado, int* binario, int semilla);
 
 int main()
@@ -83,47 +83,75 @@ int main()
                         {
 
                             int binario[semilla];
+                            int copia[semilla];
                             int codificado[semilla];
 
                             archivoEscritura.open(nomArchivo);
-                            /*//Esto ya no se hace porque la info la tengo en el string, por lo que no tengo que leerel archivo.
-                            for(int i=0; i<semilla; i++){
-                                char temp = archivoLectura.get();
-                                if(archivoLectura.good()){
-                                    binario[i]=temp;
-                                }
-                            }*/
 
-                            for(int i=0; ; i+semilla){
+                            for(size_t i=0; i<contenido.length()-1;){
                                 for(int j=0; j<semilla; j++){
-                                    binario[j]=contenido[j];
+                                    binario[j]=contenido[i+j];
+                                    if(i==0){
+                                        copia[j]=binario[j];
+                                    }
+                                    //cout<<"El cont es: "<<binario[j];
                                 }
-                            }
 
-
-
-
-
-
-                            /*
-                            for(int i=0; i<semilla; i++){
-                                if(binario[i]=='1'){
-                                    codificado[i]=0;
-                                    archivoEscritura<<codificado[i];
+                                if(i==0){//Esto es para que invierta todos los elementos del primer grupo no más
+                                    for(int i=0; i<semilla; i++){
+                                        if(binario[i]=='1'){
+                                            codificado[i]=0;
+                                            archivoEscritura<<codificado[i];
+                                        }
+                                        else{
+                                            codificado[i]=1;
+                                            archivoEscritura<<codificado[i];
+                                        }
+                                    }
                                 }
                                 else{
-                                    codificado[i]=1;
-                                    archivoEscritura<<codificado[i];
+                                    //Invocar el método uno
+
+                                    for(int i=0; i<semilla; i++){
+                                        codificado[i]=binario[i];
+                                    }
+                                    MetodoUno(codificado, binario, copia, semilla);
+
+                                    for(int i=0; i<semilla; i++){
+                                        archivoEscritura<<codificado[i];
+                                    }
+
+                                    for(int j=0; j<semilla; j++){
+                                        copia[j]=binario[j];
+                                    }
                                 }
-                            }*/
-
-
+                                i = i+semilla;
+                            }
                             archivoEscritura.close();
-
                             break;
                         }
                         case 2://Metodo 2
                         {
+
+                            int binario[semilla];
+                            int codificado[semilla];
+
+                            archivoEscritura.open(nomArchivo);
+
+                            for(size_t i=0; i<contenido.length()-1;){
+                                for(int j=0; j<semilla; j++){
+                                    binario[j]=contenido[i+j];
+                                    //cout<<"El cont es: "<<binario[j];
+                                }
+                                    //Invocar el método uno
+                                MetodoDos(codificado, binario, semilla);
+
+                                for(int i=0; i<semilla; i++){
+                                    archivoEscritura<<codificado[i];
+                                }
+                                i = i+semilla;
+                            }
+                            archivoEscritura.close();
                             break;
                         }
                         default:
@@ -257,14 +285,14 @@ void DeciToBin(char letra, int* Binario){
     }
 }
 
-void MetodoUno(int* codificado, int* binario, int semilla){
+void MetodoUno(int* codificado, int* binario, int* copia, int semilla){
     //Esta funcion realiza la codificacion (decodificacion) correspondiente al metodo uno
     int unos=0;
     int ceros=0;
     //Hacer un for que cuente cuantos 1 y 0 hay
 
     for(int i=0; i<semilla; i++){
-        if(binario[i]=='0')
+        if(copia[i]=='0')
             ceros += 1;
         else
             unos += 1;
@@ -286,27 +314,27 @@ void MetodoUno(int* codificado, int* binario, int semilla){
     //Si hay mas 0, se invierten cada dos bits
 
     else if(ceros>unos){
-        for(int i=0; i<semilla; i+2){
+        for(int i=1; i<semilla;){
             if(binario[i]=='1'){
                 codificado[i]=0;
             }
             else{
                 codificado[i]=1;
             }
+            i=i+2;
         }
     }
 
     //Sino, se invierten cada 3 bits
     else{
-        if(ceros>unos){
-            for(int i=0; i<semilla; i+2){
-                if(binario[i]=='1'){
-                    codificado[i]=0;
-                }
-                else{
-                    codificado[i]=1;
-                }
+        for(int i=2; i<semilla;){
+            if(binario[i]=='1'){
+                codificado[i]=0;
             }
+            else{
+                codificado[i]=1;
+            }
+            i=i+3;
         }
     }
 }
@@ -317,10 +345,11 @@ void MetodoDos(int* codificado, int* binario, int semilla){
         for(int j=0; j<1; j++){
             codificado[j]=binario[i];
         }
-        for(int k=1; k<semilla; k++){
-            for(int j=1; j<semilla; j++){
-                codificado[j]=binario[k];
-            }
+    }
+    for(int k=0; k<semilla-2;){
+        for(int j=1; j<semilla; j++){
+            codificado[j]=binario[k];
+            k++;
         }
     }
 }
