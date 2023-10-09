@@ -11,7 +11,7 @@ void Metodo();
 int BinToDeci(int binario[]);
 int Potencia(int base,int exp);
 void DeciToBin(char letra, int* Binario);
-void MetodoUno(int* codificado, int* binario, int* copia, int semilla);
+void MetodoUno(char* codificado, char* binario, char* copia, int semilla);
 void MetodoDos(int* codificado, int* binario, int semilla);
 
 int main()
@@ -82,9 +82,9 @@ int main()
                         case 1://Metodo 1
                         {
 
-                            int binario[semilla];
-                            int copia[semilla];
-                            int codificado[semilla];
+                            char binario[semilla];
+                            char copia[semilla];
+                            char codificado[semilla];
 
                             archivoEscritura.open(nomArchivo);
 
@@ -94,17 +94,16 @@ int main()
                                     if(i==0){
                                         copia[j]=binario[j];
                                     }
-                                    //cout<<"El cont es: "<<binario[j];
                                 }
 
                                 if(i==0){//Esto es para que invierta todos los elementos del primer grupo no más
                                     for(int i=0; i<semilla; i++){
                                         if(binario[i]=='1'){
-                                            codificado[i]=0;
+                                            codificado[i]='0';
                                             archivoEscritura<<codificado[i];
                                         }
                                         else{
-                                            codificado[i]=1;
+                                            codificado[i]='1';
                                             archivoEscritura<<codificado[i];
                                         }
                                     }
@@ -143,11 +142,11 @@ int main()
                                     binario[j]=contenido[i+j];
                                     //cout<<"El cont es: "<<binario[j];
                                 }
-                                    //Invocar el método uno
+                                //Invocar el metodo dos
                                 MetodoDos(codificado, binario, semilla);
 
                                 for(int i=0; i<semilla; i++){
-                                    archivoEscritura<<codificado[i];
+                                    archivoEscritura<<(codificado[i]-48);
                                 }
                                 i = i+semilla;
                             }
@@ -164,6 +163,42 @@ int main()
                 }
                 case 2://Quiere decodificar un archivo
                 {
+/*
+                    ifstream archivoLectura;
+                    ofstream archivoEscritura;
+                    string nombreArchivo;
+                    string nomArchivo;
+                    cout<<"Ingrese el nombre del archivo donde se guardo el codificado: "<<endl;
+                    cin>>nombreArchivo; //ESTE ES EL QUE SE PASA PARA QUE SE ABRA
+                    cout<<"Ingrese el nombre del archivo que contendra el decodificado: "<<endl;
+                    cin>>nomArchivo;
+                    archivoLectura.open(nombreArchivo);
+                    archivoEscritura.open("binario2.txt");
+
+                    archivoEscritura.close();
+                    archivoLectura.close();
+
+                    archivoLectura.open("binario2.txt");
+
+                    if (!archivoLectura.is_open()){
+                        cout<<"NO SE PUDO ABRIR EL ARCHIVO"<<endl;
+                    }
+
+                    string contenido;//Aquí está almacenado el binario
+                    string linea;
+
+                    while (getline(archivoLectura, linea)) {
+                        contenido += linea + "\n"; // Agrega cada línea al contenido
+                    }
+                    archivoLectura.close();*/
+
+
+
+
+
+
+
+
                     int semilla=0;
                     cout<<"Cual fue la semilla de codificacion que uso: "<<endl;
                     cin>>semilla;
@@ -285,7 +320,7 @@ void DeciToBin(char letra, int* Binario){
     }
 }
 
-void MetodoUno(int* codificado, int* binario, int* copia, int semilla){
+void MetodoUno(char* codificado, char* binario, char* copia, int semilla){
     //Esta funcion realiza la codificacion (decodificacion) correspondiente al metodo uno
     int unos=0;
     int ceros=0;
@@ -303,10 +338,10 @@ void MetodoUno(int* codificado, int* binario, int* copia, int semilla){
     if(ceros == unos){
         for(int i=0; i<semilla; i++){
             if(binario[i]=='1'){
-                codificado[i]=0;
+                codificado[i]='0';
             }
             else{
-                codificado[i]=1;
+                codificado[i]='1';
             }
         }
     }
@@ -316,10 +351,10 @@ void MetodoUno(int* codificado, int* binario, int* copia, int semilla){
     else if(ceros>unos){
         for(int i=1; i<semilla;){
             if(binario[i]=='1'){
-                codificado[i]=0;
+                codificado[i]='0';
             }
             else{
-                codificado[i]=1;
+                codificado[i]='1';
             }
             i=i+2;
         }
@@ -329,10 +364,10 @@ void MetodoUno(int* codificado, int* binario, int* copia, int semilla){
     else{
         for(int i=2; i<semilla;){
             if(binario[i]=='1'){
-                codificado[i]=0;
+                codificado[i]='0';
             }
             else{
-                codificado[i]=1;
+                codificado[i]='1';
             }
             i=i+3;
         }
