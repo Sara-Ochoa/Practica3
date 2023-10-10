@@ -14,6 +14,7 @@ int Potencia(int base,int exp);
 void DeciToBin(char letra, int* Binario);
 void MetodoUno(char* codificado, char* binario, char* copia, int semilla);
 void MetodoDos(int* codificado, int* binario, int semilla);
+void MetodoDosDecod(int* codificado, int* binario, int semilla);
 
 int main()
 {
@@ -68,8 +69,6 @@ int main()
                         contenido += linea + "\n"; // Agrega cada línea al contenido
                     }
                     archivoLectura.close();
-
-                    //cout<<"El binario es: "<<contenido<<endl;
 
                     int semilla=0;
                     cout<<"Ingrese la semilla de codificacion: "<<endl;
@@ -141,7 +140,6 @@ int main()
                             for(size_t i=0; i<contenido.length()-1;){
                                 for(int j=0; j<semilla; j++){
                                     binario[j]=contenido[i+j];
-                                    //cout<<"El cont es: "<<binario[j];
                                 }
                                 //Invocar el metodo dos
                                 MetodoDos(codificado, binario, semilla);
@@ -203,7 +201,7 @@ int main()
                             char copia[semilla];
                             char codificado[semilla];
 
-                            archivoEscritura.open("binario2.txt");
+                            archivoEscritura.open("binarioM1.txt");
 
                             for(size_t i=0; i<contenido.length()-1;){
                                 for(int j=0; j<semilla; j++){
@@ -245,24 +243,24 @@ int main()
                             }
                             archivoEscritura.close();
 
-                            archivoLectura.open("binario2.txt");
+                            archivoLectura.open("binarioM1.txt");
                             if (!archivoLectura.is_open()){
                                 cout<<"NO SE PUDO ABRIR EL ARCHIVO"<<endl;
                             }
 
-                            string contenido;//Aquí está almacenado el binario
+                            string contenido1;//Aquí está almacenado el binario
                             string linea;
 
                             while (getline(archivoLectura, linea)) {
-                                contenido += linea + "\n"; // Agrega cada línea al contenido
+                                contenido1 += linea + "\n"; // Agrega cada línea al contenido
                             }
                             archivoLectura.close();
 
                             int bin[8];
                             archivoEscritura.open(nomArchivo);
-                            for(size_t i=0; i<contenido.length()-1;){
+                            for(size_t i=0; i<contenido1.length()-1;){
                                 for(int j=0; j<8; j++){
-                                    bin[j]=contenido[i+j];
+                                    bin[j]=contenido1[i+j];
                                 }
 
                                 archivoEscritura<<static_cast<char>(BinToDeci(bin));
@@ -274,6 +272,50 @@ int main()
                         }
                         case 2:
                         {
+                            int binario[semilla]={0};
+                            int codificado[semilla];
+
+                            archivoEscritura.open("binarioM2.txt");
+
+                            for(size_t i=0; i<contenido.length()-1;){
+                                for(int j=0; j<semilla; j++){
+                                    codificado[j]=contenido[i+j];
+                                }
+                                //Invocar el metodo dos
+                                MetodoDosDecod(codificado, binario, semilla);
+
+                                for(int i=0; i<semilla; i++){
+                                    archivoEscritura<<(binario[i]-48);
+                                }
+                                i = i+semilla;
+                            }
+                            archivoEscritura.close();
+
+                            archivoLectura.open("binarioM2.txt");
+                            if (!archivoLectura.is_open()){
+                                cout<<"NO SE PUDO ABRIR EL ARCHIVO"<<endl;
+                            }
+
+                            string contenido2;//Aquí está almacenado el binario
+                            string linea;
+
+                            while (getline(archivoLectura, linea)) {
+                                contenido2 += linea + "\n"; // Agrega cada línea al contenido
+                            }
+                            archivoLectura.close();
+                            int bin[8];
+                            archivoEscritura.open(nomArchivo);
+                            for(size_t i=0; i<contenido2.length()-1;){
+                                for(int j=0; j<8; j++){
+                                    bin[j]=contenido2[i+j];
+                                }
+
+                                archivoEscritura<<static_cast<char>(BinToDeci(bin));
+
+                                i = i+8;
+                            }
+                            archivoEscritura.close();
+
                             break;
                         }
                         default:
@@ -437,7 +479,7 @@ void MetodoUno(char* codificado, char* binario, char* copia, int semilla){
 }
 
 void MetodoDos(int* codificado, int* binario, int semilla){
-    //Esta función realiza la codificacion (decodificacion) correspondiente al metodo dos
+    //Esta función realiza la codificacion correspondiente al metodo dos
     for(int i=semilla-1; i>semilla-2; i--){
         for(int j=0; j<1; j++){
             codificado[j]=binario[i];
@@ -451,12 +493,22 @@ void MetodoDos(int* codificado, int* binario, int semilla){
     }
 }
 
-
-
-
-
-
-
-
-
-
+void MetodoDosDecod(int* codificado, int* binario, int semilla){
+    //Esta función realiza la decodificacion correspondiente al metodo dos
+    /*for(int i=1; i<semilla;){
+        for(int j=0; j<=semilla-2; j++){
+            binario[j]=codificado[i];
+        }
+        i++;
+    }
+    for(int i=0; i<1;){
+        for(int j=semilla-1; j>semilla-2; j--){
+            binario[j]=codificado[i];
+        }
+        i++;
+    }*/
+    for(int i = 1; i < semilla; i++) {
+        binario[i -1] = codificado[i];
+        binario[semilla -1] = codificado[0];
+    }
+}
