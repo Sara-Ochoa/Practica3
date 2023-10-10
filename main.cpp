@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cmath>
 
 using namespace std;
 
@@ -8,7 +9,7 @@ void MenuPrincipal();
 void MenuUno();
 void MenuDos();
 void Metodo();
-int BinToDeci(int binario[]);
+int BinToDeci(int* binario);
 int Potencia(int base,int exp);
 void DeciToBin(char letra, int* Binario);
 void MetodoUno(char* codificado, char* binario, char* copia, int semilla);
@@ -35,7 +36,7 @@ int main()
                     string nombreArchivo;
                     string nomArchivo;
                     cout<<"Ingrese el nombre del archivo: "<<endl;
-                    cin>>nombreArchivo; //ESTE ES EL QUE SE PASA PARA QUE SE ABRA
+                    cin>>nombreArchivo; //ESTE ES EL QUE SE PASA PARA QUE SE ABRA Y TIENE QUE ESTAR EN EL PC YA CREADO
                     cout<<"Ingrese el nombre del archivo que contendra el codificado: "<<endl;
                     cin>>nomArchivo;
                     archivoLectura.open(nombreArchivo);
@@ -163,41 +164,29 @@ int main()
                 }
                 case 2://Quiere decodificar un archivo
                 {
-/*
+
                     ifstream archivoLectura;
                     ofstream archivoEscritura;
                     string nombreArchivo;
                     string nomArchivo;
                     cout<<"Ingrese el nombre del archivo donde se guardo el codificado: "<<endl;
-                    cin>>nombreArchivo; //ESTE ES EL QUE SE PASA PARA QUE SE ABRA
+                    cin>>nombreArchivo; //ESTE ES EL QUE SE PASA PARA QUE SE ABRA EL CODIFICADO QUE ESTA GUARDADO EN EL PC
                     cout<<"Ingrese el nombre del archivo que contendra el decodificado: "<<endl;
                     cin>>nomArchivo;
+
                     archivoLectura.open(nombreArchivo);
-                    archivoEscritura.open("binario2.txt");
-
-                    archivoEscritura.close();
-                    archivoLectura.close();
-
-                    archivoLectura.open("binario2.txt");
 
                     if (!archivoLectura.is_open()){
                         cout<<"NO SE PUDO ABRIR EL ARCHIVO"<<endl;
                     }
 
-                    string contenido;//Aquí está almacenado el binario
+                    string contenido;//Aquí está almacenado el codificado
                     string linea;
 
                     while (getline(archivoLectura, linea)) {
                         contenido += linea + "\n"; // Agrega cada línea al contenido
                     }
-                    archivoLectura.close();*/
-
-
-
-
-
-
-
+                    archivoLectura.close();
 
                     int semilla=0;
                     cout<<"Cual fue la semilla de codificacion que uso: "<<endl;
@@ -209,11 +198,84 @@ int main()
                         cin>>opcion;
                         switch (opcion) {
                         case 1:
+                        {
+                            char binario[semilla];
+                            char copia[semilla];
+                            char codificado[semilla];
 
+                            archivoEscritura.open("binario2.txt");
+
+                            for(size_t i=0; i<contenido.length()-1;){
+                                for(int j=0; j<semilla; j++){
+                                    codificado[j]=contenido[i+j];
+                                }
+
+                                if(i==0){//Esto es para que invierta todos los elementos del primer grupo no más
+                                    for(int i=0; i<semilla; i++){
+                                        if(codificado[i]=='1'){
+                                            binario[i]='0';
+                                            archivoEscritura<<binario[i];
+                                        }
+                                        else{
+                                            binario[i]='1';
+                                            archivoEscritura<<binario[i];
+                                        }
+                                    }
+                                    for(int i=0; i<semilla; i++){
+                                        copia[i]=binario[i];
+                                    }
+                                }
+                                else{
+                                    //Invocar el método uno
+
+                                    for(int i=0; i<semilla; i++){
+                                        binario[i]=codificado[i];
+                                    }
+                                    MetodoUno(binario, codificado, copia, semilla);
+
+                                    for(int i=0; i<semilla; i++){
+                                        archivoEscritura<<binario[i];
+                                    }
+
+                                    for(int j=0; j<semilla; j++){
+                                        copia[j]=binario[j];
+                                    }
+                                }
+                                i = i+semilla;
+                            }
+                            archivoEscritura.close();
+
+                            archivoLectura.open("binario2.txt");
+                            if (!archivoLectura.is_open()){
+                                cout<<"NO SE PUDO ABRIR EL ARCHIVO"<<endl;
+                            }
+
+                            string contenido;//Aquí está almacenado el binario
+                            string linea;
+
+                            while (getline(archivoLectura, linea)) {
+                                contenido += linea + "\n"; // Agrega cada línea al contenido
+                            }
+                            archivoLectura.close();
+
+                            int bin[8];
+                            archivoEscritura.open(nomArchivo);
+                            for(size_t i=0; i<contenido.length()-1;){
+                                for(int j=0; j<8; j++){
+                                    bin[j]=contenido[i+j];
+                                }
+
+                                archivoEscritura<<static_cast<char>(BinToDeci(bin));
+
+                                i = i+8;
+                            }
+                            archivoEscritura.close();
                             break;
+                        }
                         case 2:
-
+                        {
                             break;
+                        }
                         default:
                             if(opcion!=0)
                                 cout<<"La opcion no valida"<<endl;
@@ -294,11 +356,11 @@ void Metodo(){
     cout<<"0.Para salir"<<endl;
 }
 
-int BinToDeci(int binario[]){
+int BinToDeci(int* binario){
     //Esta funcion convierte un numero binario a decimal
     int decimal=0;
     for(int i=7, e=0; i>=0; i--, e++){
-        decimal += binario[i]*Potencia(2, e);
+        decimal += (binario[i]-48)*Potencia(2, e);
     }
     return decimal;
 }
