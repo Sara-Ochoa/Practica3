@@ -1,20 +1,18 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <cmath>
 
 using namespace std;
 
 void MenuPrincipal();
 void MenuUno();
-void MenuDos();
 void Metodo();
 int BinToDeci(int* binario);
 int Potencia(int base,int exp);
 void DeciToBin(char letra, int* Binario);
 void MetodoUno(char* codificado, char* binario, char* copia, int semilla);
-void MetodoDos(int* codificado, int* binario, int semilla);
-void MetodoDosDecod(int* codificado, int* binario, int semilla);
+void MetodoDos(char* codificado, char* binario, int semilla);
+void MetodoDosDecod(char* codificado, char* binario, int semilla);
 
 int main()
 {
@@ -132,8 +130,8 @@ int main()
                         case 2://Metodo 2
                         {
 
-                            int binario[semilla];
-                            int codificado[semilla];
+                            char binario[semilla];
+                            char codificado[semilla];
 
                             archivoEscritura.open(nomArchivo);
 
@@ -272,8 +270,8 @@ int main()
                         }
                         case 2:
                         {
-                            int binario[semilla]={0};
-                            int codificado[semilla];
+                            char binario[semilla];
+                            char codificado[semilla];
 
                             archivoEscritura.open("binarioM2.txt");
 
@@ -336,21 +334,7 @@ int main()
         }
         case 2://Ejercicio 2
         {
-            int opcion=1;
-            while(opcion!=0){
-                MenuDos();
-                cin>>opcion;
-                switch (opcion) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                default:
-                    if(opcion!=0)
-                        cout<<"La opcion no valida"<<endl;
-                    break;
-                }
-            }
+            cout<<"No lo realice"<<endl;
             break;
         }
         default:
@@ -359,6 +343,7 @@ int main()
             break;
         }
     }
+
     return 0;
 }
 
@@ -380,22 +365,12 @@ void MenuUno(){
     cout<<"0.Para salir"<<endl;
 }
 
-void MenuDos(){
-    cout<<endl;
-    cout<<"*********** Ejercicio 2 ***********"<<endl;
-    cout<<endl;
-    cout<<"1. Acceder como administrador"<<endl;
-    cout<<"2. Acceder como usuario"<<endl;
-    cout<<"0.Para salir"<<endl;
-}
-
 void Metodo(){
     cout<<endl;
     cout<<"*********** Metodo ***********"<<endl;
     cout<<endl;
     cout<<"1. Metodo uno"<<endl;
     cout<<"2. Metodo dos"<<endl;
-    cout<<"0.Para salir"<<endl;
 }
 
 int BinToDeci(int* binario){
@@ -478,7 +453,7 @@ void MetodoUno(char* codificado, char* binario, char* copia, int semilla){
     }
 }
 
-void MetodoDos(int* codificado, int* binario, int semilla){
+void MetodoDos(char* codificado, char* binario, int semilla){
     //Esta función realiza la codificacion correspondiente al metodo dos
     for(int i=semilla-1; i>semilla-2; i--){
         for(int j=0; j<1; j++){
@@ -493,20 +468,8 @@ void MetodoDos(int* codificado, int* binario, int semilla){
     }
 }
 
-void MetodoDosDecod(int* codificado, int* binario, int semilla){
+void MetodoDosDecod(char* codificado, char* binario, int semilla){
     //Esta función realiza la decodificacion correspondiente al metodo dos
-    /*for(int i=1; i<semilla;){
-        for(int j=0; j<=semilla-2; j++){
-            binario[j]=codificado[i];
-        }
-        i++;
-    }
-    for(int i=0; i<1;){
-        for(int j=semilla-1; j>semilla-2; j--){
-            binario[j]=codificado[i];
-        }
-        i++;
-    }*/
     for(int i = 1; i < semilla; i++) {
         binario[i -1] = codificado[i];
         binario[semilla -1] = codificado[0];
