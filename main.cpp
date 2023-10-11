@@ -17,6 +17,8 @@ void MetodoDosDecod(char* codificado, char* binario, int semilla);
 int main()
 {
     int opcion=1;
+    try
+    {
     while(opcion!=0){
         MenuPrincipal();//Menu principal
         cin>>opcion;
@@ -40,33 +42,44 @@ int main()
                     cin>>nomArchivo;
                     archivoLectura.open(nombreArchivo);
                     archivoEscritura.open("binario.txt");
-                    while(archivoLectura.good()){
-                        char temp = archivoLectura.get();//LO QUE ESTÁ EN TEMP CONVERTIRLO A BINARIO Y LUEGO ESCRIBIRLO
-                        if(archivoLectura.good()){
-                            int Binario[8];
-                            DeciToBin(temp, Binario);
+                    if(archivoLectura.is_open()){
+                        if(archivoEscritura.is_open()){
+                            while(archivoLectura.good()){
+                                char temp = archivoLectura.get();//LO QUE ESTÁ EN TEMP CONVERTIRLO A BINARIO Y LUEGO ESCRIBIRLO
+                                if(archivoLectura.good()){
+                                    int Binario[8];
+                                    DeciToBin(temp, Binario);
 
-                            for(int i=7; i>=0; i--){
-                                archivoEscritura<<Binario[i];
+                                    for(int i=7; i>=0; i--){
+                                        archivoEscritura<<Binario[i];
+                                    }
+                                }
                             }
+                            archivoEscritura.close();
+                            archivoLectura.close();
+                        }
+                        else{
+                            throw'2';
                         }
                     }
-                    archivoEscritura.close();
-                    archivoLectura.close();
-
-                    archivoLectura.open("binario.txt");
-
-                    if (!archivoLectura.is_open()){
-                        cout<<"NO SE PUDO ABRIR EL ARCHIVO"<<endl;
+                    else{
+                        throw '1';
                     }
 
                     string contenido;//Aquí está almacenado el binario
                     string linea;
+                    archivoLectura.open("binario.txt");
 
-                    while (getline(archivoLectura, linea)) {
-                        contenido += linea + "\n"; // Agrega cada línea al contenido
+                    if (archivoLectura.is_open()){
+                        while (getline(archivoLectura, linea)) {
+                            contenido += linea + "\n"; // Agrega cada línea al contenido
+                        }
+                        archivoLectura.close();
                     }
-                    archivoLectura.close();
+                    else{
+                        throw '1';
+                    }
+
 
                     int semilla=0;
                     cout<<"Ingrese la semilla de codificacion: "<<endl;
@@ -85,46 +98,51 @@ int main()
                             char codificado[semilla];
 
                             archivoEscritura.open(nomArchivo);
-
-                            for(size_t i=0; i<contenido.length()-1;){
-                                for(int j=0; j<semilla; j++){
-                                    binario[j]=contenido[i+j];
-                                    if(i==0){
-                                        copia[j]=binario[j];
-                                    }
-                                }
-
-                                if(i==0){//Esto es para que invierta todos los elementos del primer grupo no más
-                                    for(int i=0; i<semilla; i++){
-                                        if(binario[i]=='1'){
-                                            codificado[i]='0';
-                                            archivoEscritura<<codificado[i];
-                                        }
-                                        else{
-                                            codificado[i]='1';
-                                            archivoEscritura<<codificado[i];
-                                        }
-                                    }
-                                }
-                                else{
-                                    //Invocar el método uno
-
-                                    for(int i=0; i<semilla; i++){
-                                        codificado[i]=binario[i];
-                                    }
-                                    MetodoUno(codificado, binario, copia, semilla);
-
-                                    for(int i=0; i<semilla; i++){
-                                        archivoEscritura<<codificado[i];
-                                    }
-
+                            if(archivoEscritura.is_open()){
+                                for(size_t i=0; i<contenido.length()-1;){
                                     for(int j=0; j<semilla; j++){
-                                        copia[j]=binario[j];
+                                        binario[j]=contenido[i+j];
+                                        if(i==0){
+                                            copia[j]=binario[j];
+                                        }
                                     }
+
+                                    if(i==0){//Esto es para que invierta todos los elementos del primer grupo no más
+                                        for(int i=0; i<semilla; i++){
+                                            if(binario[i]=='1'){
+                                                codificado[i]='0';
+                                                archivoEscritura<<codificado[i];
+                                            }
+                                            else{
+                                                codificado[i]='1';
+                                                archivoEscritura<<codificado[i];
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        //Invocar el método uno
+
+                                        for(int i=0; i<semilla; i++){
+                                            codificado[i]=binario[i];
+                                        }
+                                        MetodoUno(codificado, binario, copia, semilla);
+
+                                        for(int i=0; i<semilla; i++){
+                                            archivoEscritura<<codificado[i];
+                                        }
+
+                                        for(int j=0; j<semilla; j++){
+                                            copia[j]=binario[j];
+                                        }
+                                    }
+                                    i = i+semilla;
                                 }
-                                i = i+semilla;
+                                archivoEscritura.close();
                             }
-                            archivoEscritura.close();
+                            else{
+                                throw '2';
+                            }
+
                             break;
                         }
                         case 2://Metodo 2
@@ -135,19 +153,24 @@ int main()
 
                             archivoEscritura.open(nomArchivo);
 
-                            for(size_t i=0; i<contenido.length()-1;){
-                                for(int j=0; j<semilla; j++){
-                                    binario[j]=contenido[i+j];
-                                }
-                                //Invocar el metodo dos
-                                MetodoDos(codificado, binario, semilla);
+                            if(archivoEscritura.is_open()){
+                                for(size_t i=0; i<contenido.length()-1;){
+                                    for(int j=0; j<semilla; j++){
+                                        binario[j]=contenido[i+j];
+                                    }
+                                    //Invocar el metodo dos
+                                    MetodoDos(codificado, binario, semilla);
 
-                                for(int i=0; i<semilla; i++){
-                                    archivoEscritura<<(codificado[i]-48);
+                                    for(int i=0; i<semilla; i++){
+                                        archivoEscritura<<(codificado[i]-48);
+                                    }
+                                    i = i+semilla;
                                 }
-                                i = i+semilla;
+                                archivoEscritura.close();
                             }
-                            archivoEscritura.close();
+                            else{
+                                throw '2';
+                            }
                             break;
                         }
                         default:
@@ -170,19 +193,19 @@ int main()
                     cout<<"Ingrese el nombre del archivo que contendra el decodificado: "<<endl;
                     cin>>nomArchivo;
 
-                    archivoLectura.open(nombreArchivo);
-
-                    if (!archivoLectura.is_open()){
-                        cout<<"NO SE PUDO ABRIR EL ARCHIVO"<<endl;
-                    }
-
                     string contenido;//Aquí está almacenado el codificado
                     string linea;
+                    archivoLectura.open(nombreArchivo);
 
-                    while (getline(archivoLectura, linea)) {
-                        contenido += linea + "\n"; // Agrega cada línea al contenido
+                    if (archivoLectura.is_open()){
+                        while (getline(archivoLectura, linea)) {
+                            contenido += linea + "\n"; // Agrega cada línea al contenido
+                        }
+                        archivoLectura.close();
                     }
-                    archivoLectura.close();
+                    else{
+                        throw '1';
+                    }
 
                     int semilla=0;
                     cout<<"Cual fue la semilla de codificacion que uso: "<<endl;
@@ -201,71 +224,83 @@ int main()
 
                             archivoEscritura.open("binarioM1.txt");
 
-                            for(size_t i=0; i<contenido.length()-1;){
-                                for(int j=0; j<semilla; j++){
-                                    codificado[j]=contenido[i+j];
-                                }
-
-                                if(i==0){//Esto es para que invierta todos los elementos del primer grupo no más
-                                    for(int i=0; i<semilla; i++){
-                                        if(codificado[i]=='1'){
-                                            binario[i]='0';
-                                            archivoEscritura<<binario[i];
-                                        }
-                                        else{
-                                            binario[i]='1';
-                                            archivoEscritura<<binario[i];
-                                        }
-                                    }
-                                    for(int i=0; i<semilla; i++){
-                                        copia[i]=binario[i];
-                                    }
-                                }
-                                else{
-                                    //Invocar el método uno
-
-                                    for(int i=0; i<semilla; i++){
-                                        binario[i]=codificado[i];
-                                    }
-                                    MetodoUno(binario, codificado, copia, semilla);
-
-                                    for(int i=0; i<semilla; i++){
-                                        archivoEscritura<<binario[i];
-                                    }
-
+                            if(archivoEscritura.is_open()){
+                                for(size_t i=0; i<contenido.length()-1;){
                                     for(int j=0; j<semilla; j++){
-                                        copia[j]=binario[j];
+                                        codificado[j]=contenido[i+j];
                                     }
-                                }
-                                i = i+semilla;
-                            }
-                            archivoEscritura.close();
 
-                            archivoLectura.open("binarioM1.txt");
-                            if (!archivoLectura.is_open()){
-                                cout<<"NO SE PUDO ABRIR EL ARCHIVO"<<endl;
+                                    if(i==0){//Esto es para que invierta todos los elementos del primer grupo no más
+                                        for(int i=0; i<semilla; i++){
+                                            if(codificado[i]=='1'){
+                                                binario[i]='0';
+                                                archivoEscritura<<binario[i];
+                                            }
+                                            else{
+                                                binario[i]='1';
+                                                archivoEscritura<<binario[i];
+                                            }
+                                        }
+                                        for(int i=0; i<semilla; i++){
+                                            copia[i]=binario[i];
+                                        }
+                                    }
+                                    else{
+                                        //Invocar el método uno
+
+                                        for(int i=0; i<semilla; i++){
+                                            binario[i]=codificado[i];
+                                        }
+                                        MetodoUno(binario, codificado, copia, semilla);
+
+                                        for(int i=0; i<semilla; i++){
+                                            archivoEscritura<<binario[i];
+                                        }
+
+                                        for(int j=0; j<semilla; j++){
+                                            copia[j]=binario[j];
+                                        }
+                                    }
+                                    i = i+semilla;
+                                }
+                                archivoEscritura.close();
+                            }
+                            else{
+                                throw '2';
                             }
 
                             string contenido1;//Aquí está almacenado el binario
                             string linea;
+                            archivoLectura.open("binarioM1.txt");
 
-                            while (getline(archivoLectura, linea)) {
-                                contenido1 += linea + "\n"; // Agrega cada línea al contenido
+                            if (archivoLectura.is_open()){
+
+                                while (getline(archivoLectura, linea)) {
+                                    contenido1 += linea + "\n"; // Agrega cada línea al contenido
+                                }
+                                archivoLectura.close();
                             }
-                            archivoLectura.close();
+                            else{
+                                throw '1';
+                            }
 
                             int bin[8];
                             archivoEscritura.open(nomArchivo);
-                            for(size_t i=0; i<contenido1.length()-1;){
-                                for(int j=0; j<8; j++){
-                                    bin[j]=contenido1[i+j];
+                            if(archivoEscritura.is_open()){
+                                for(size_t i=0; i<contenido1.length()-1;){
+                                    for(int j=0; j<8; j++){
+                                        bin[j]=contenido1[i+j];
+                                    }
+
+                                    archivoEscritura<<static_cast<char>(BinToDeci(bin));
+
+                                    i = i+8;
                                 }
-
-                                archivoEscritura<<static_cast<char>(BinToDeci(bin));
-
-                                i = i+8;
+                                archivoEscritura.close();
                             }
-                            archivoEscritura.close();
+                            else{
+                                throw '2';
+                            }
                             break;
                         }
                         case 2:
@@ -275,44 +310,57 @@ int main()
 
                             archivoEscritura.open("binarioM2.txt");
 
-                            for(size_t i=0; i<contenido.length()-1;){
-                                for(int j=0; j<semilla; j++){
-                                    codificado[j]=contenido[i+j];
-                                }
-                                //Invocar el metodo dos
-                                MetodoDosDecod(codificado, binario, semilla);
+                            if(archivoEscritura.is_open()){
+                                for(size_t i=0; i<contenido.length()-1;){
+                                    for(int j=0; j<semilla; j++){
+                                        codificado[j]=contenido[i+j];
+                                    }
+                                    //Invocar el metodo dos
+                                    MetodoDosDecod(codificado, binario, semilla);
 
-                                for(int i=0; i<semilla; i++){
-                                    archivoEscritura<<(binario[i]-48);
+                                    for(int i=0; i<semilla; i++){
+                                        archivoEscritura<<(binario[i]-48);
+                                    }
+                                    i = i+semilla;
                                 }
-                                i = i+semilla;
+                                archivoEscritura.close();
                             }
-                            archivoEscritura.close();
-
-                            archivoLectura.open("binarioM2.txt");
-                            if (!archivoLectura.is_open()){
-                                cout<<"NO SE PUDO ABRIR EL ARCHIVO"<<endl;
+                            else{
+                                throw '2';
                             }
 
                             string contenido2;//Aquí está almacenado el binario
                             string linea;
+                            archivoLectura.open("binarioM2.txt");
 
-                            while (getline(archivoLectura, linea)) {
-                                contenido2 += linea + "\n"; // Agrega cada línea al contenido
+                            if (archivoLectura.is_open()){
+                                while (getline(archivoLectura, linea)) {
+                                    contenido2 += linea + "\n"; // Agrega cada línea al contenido
+                                }
+                                archivoLectura.close();
                             }
-                            archivoLectura.close();
+                            else{
+                                throw '1';
+                            }
+
                             int bin[8];
                             archivoEscritura.open(nomArchivo);
-                            for(size_t i=0; i<contenido2.length()-1;){
-                                for(int j=0; j<8; j++){
-                                    bin[j]=contenido2[i+j];
+
+                            if(archivoEscritura.is_open()){
+                                for(size_t i=0; i<contenido2.length()-1;){
+                                    for(int j=0; j<8; j++){
+                                        bin[j]=contenido2[i+j];
+                                    }
+
+                                    archivoEscritura<<static_cast<char>(BinToDeci(bin));
+
+                                    i = i+8;
                                 }
-
-                                archivoEscritura<<static_cast<char>(BinToDeci(bin));
-
-                                i = i+8;
+                                archivoEscritura.close();
                             }
-                            archivoEscritura.close();
+                            else{
+                                throw '2';
+                            }
 
                             break;
                         }
@@ -343,6 +391,15 @@ int main()
             break;
         }
     }
+    }
+    catch(char c){
+        if(c=='1')
+            cout<<"Error con el archivo de lectura"<<endl;
+        else if(c=='2')
+            cout<<"Error con el archivo de escritura"<<endl;
+        else
+            cout<<"Error inesperado"<<endl;
+    }
 
     return 0;
 }
@@ -371,6 +428,7 @@ void Metodo(){
     cout<<endl;
     cout<<"1. Metodo uno"<<endl;
     cout<<"2. Metodo dos"<<endl;
+    cout<<"0. Para salir"<<endl;
 }
 
 int BinToDeci(int* binario){
